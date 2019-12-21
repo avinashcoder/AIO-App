@@ -66,7 +66,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
-            if(position>0){
+            if(position>=0){
                 mListener.onClick( position );
             }
         }

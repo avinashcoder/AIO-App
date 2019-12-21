@@ -11,29 +11,25 @@ import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class WebViewActivity extends AppCompatActivity implements AdvancedWebView.Listener {
+public class WebViewActivity2 extends AppCompatActivity implements AdvancedWebView.Listener {
 
     private AdvancedWebView mWebView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_web_view );
-        Intent intent = getIntent();
-        String url = intent.getStringExtra( "URL" );
+        setContentView( R.layout.activity_web_view2 );
         mWebView = findViewById(R.id.webview);
-        mWebView.setListener(this, this);
-        mWebView.loadUrl(url);
 
         mWebView.getSettings().setSupportMultipleWindows( true );
         mWebView.setWebChromeClient( new WebChromeClient(){
             @Override
             public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-                AdvancedWebView newWebView = new AdvancedWebView(WebViewActivity.this);
+                AdvancedWebView newWebView = new AdvancedWebView( WebViewActivity2.this);
                 newWebView.getSettings().setJavaScriptEnabled(true);
                 newWebView.getSettings().setSupportZoom(true);
                 newWebView.getSettings().setBuiltInZoomControls(true);
                 newWebView.getSettings().setSupportMultipleWindows(true);
-//                view.addView(newWebView);
+                view.addView(newWebView);
                 WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
                 transport.setWebView(newWebView);
                 resultMsg.sendToTarget();
@@ -41,10 +37,10 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
                 newWebView.setWebViewClient(new WebViewClient() {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        Intent browserIntent = new Intent(WebViewActivity.this,WebViewActivity.class);
-                        browserIntent.putExtra( "URL",url );
-                        startActivity(browserIntent);
-                        //view.loadUrl(url);
+//                        Intent browserIntent = new Intent(WebViewActivity.this,WebViewActivity.class);
+//                        browserIntent.putExtra( "URL",url );
+//                        startActivity(browserIntent);
+                        view.loadUrl(url);
                         return true;
                     }
                 });
@@ -77,18 +73,9 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
     @Override
     public void onExternalPageRequest(String url) {
 
-        Intent intent = new Intent( this,WebViewActivity.class );
+        Intent intent = new Intent( this, WebViewActivity2.class );
         intent.putExtra( "URL",url );
         startActivity( intent );
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(mWebView.canGoBack()){
-            mWebView.goBack();
-        }else{
-            super.onBackPressed();
-        }
     }
 }

@@ -1,11 +1,13 @@
 package com.rainbow.aiobrowser;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -98,12 +100,19 @@ public class AppsViewFragment extends Fragment {
     }
 
     private void initView() {
+//        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//        builder.setShowTitle( false );
+//        builder.enableUrlBarHiding();
+//        CustomTabsIntent customTabsIntent = builder.build();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new AppsAdapter( getContext(), arrayList, new AppsAdapter.AppClickInterface() {
             @Override
             public void onClick(int position) {
-
+                //customTabsIntent.launchUrl(getContext(), Uri.parse(arrayList.get( position ).getTargetUrl()));
+                Intent intent = new Intent( getContext(),WebViewActivity.class );
+                intent.putExtra( "URL",arrayList.get( position ).getTargetUrl() );
+                startActivity( intent );
             }
         } );
         recyclerView.setAdapter( adapter );
@@ -141,7 +150,10 @@ public class AppsViewFragment extends Fragment {
         for(int i=0;i<jsonArray.length();i++){
             try {
                 AppsModel model  = new AppsModel( jsonArray.getJSONObject( i ) );
-                arrayList.add( model );
+                if(model.getAppType().equalsIgnoreCase( filter ) || filter.equalsIgnoreCase( "ALL" )){
+                    arrayList.add( model );
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
