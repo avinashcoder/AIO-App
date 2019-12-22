@@ -5,19 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,8 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AppsViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String PAGE_TYPE = "param1";
     private static final String FILTER = "param2";
 
@@ -53,6 +48,9 @@ public class AppsViewFragment extends Fragment {
 
     @BindView( R.id.recyclerView )
     RecyclerView recyclerView;
+
+
+    DatabaseHandler handler;
 
     public AppsViewFragment() {
         // Required empty public constructor
@@ -74,12 +72,18 @@ public class AppsViewFragment extends Fragment {
             pageType = getArguments().getString( PAGE_TYPE );
             filter = getArguments().getString( FILTER );
         }
-        pref = getContext().getSharedPreferences( "PREFERENCES",Context.MODE_PRIVATE );
-        String response = pref.getString( "DATA","" );
-        try {
-            jsonArray = new JSONArray( response );
-        } catch (JSONException e) {
-            e.printStackTrace();
+        handler = new DatabaseHandler( getContext() );
+
+        if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
+            arrayList = handler.getFavourite();
+        }else {
+            pref = getContext().getSharedPreferences( "PREFERENCES", Context.MODE_PRIVATE );
+            String response = pref.getString( "DATA", "" );
+            try {
+                jsonArray = new JSONArray( response );
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -89,12 +93,13 @@ public class AppsViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate( R.layout.fragment_apps_view, container, false );
         ButterKnife.bind( this,view );
-
         initView();
-        if(jsonArray.length()!=0){
-            decodeData();
-        }else{
-            getDataFromServer();
+        if(pageType.equalsIgnoreCase( "HOST" )){
+            if(jsonArray.length()!=0){
+                decodeData();
+            }else{
+                getDataFromServer();
+            }
         }
         return view;
     }
@@ -114,9 +119,45 @@ public class AppsViewFragment extends Fragment {
                 intent.putExtra( "URL",arrayList.get( position ).getTargetUrl() );
                 startActivity( intent );
             }
+
+            @Override
+            public void onLongClick(int position, View view) {
+                createPopUp(position,view);
+            }
         } );
         recyclerView.setAdapter( adapter );
         adapter.notifyDataSetChanged();
+    }
+
+    private void createPopUp(int position, View view) {
+        PopupMenu popup = new PopupMenu(getContext(),view);
+        int id = arrayList.get( position ).getId();
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.app_popup_menu, popup.getMenu());
+        if(handler.checkList( id )){
+            popup.getMenu().findItem( R.id.add ).setVisible( false );
+            popup.getMenu().findItem( R.id.remove ).setVisible( true );
+        }else{
+            popup.getMenu().findItem( R.id.add ).setVisible( true );
+            popup.getMenu().findItem( R.id.remove ).setVisible( false );
+        }
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener( item -> {
+            switch (item.getItemId()){
+                case R.id.add:
+                    handler.addFavourite( arrayList.get( position ) );
+                    Toast.makeText(getContext(),arrayList.get( position ).getName()+" is added in your favourite", Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.remove:
+                    handler.removeFavourite( id );
+                    Toast.makeText(getContext(),arrayList.get( position ).getName()+" is removed from your favourite", Toast.LENGTH_SHORT).show();
+                    return true;
+            }
+            return true;
+
+        } );
+
+        popup.show();
     }
 
     private void getDataFromServer() {
@@ -186,7 +227,6 @@ public class AppsViewFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

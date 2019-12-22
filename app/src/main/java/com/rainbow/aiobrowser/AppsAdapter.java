@@ -29,6 +29,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
 
     interface AppClickInterface{
         void onClick(int position);
+        void  onLongClick(int position, View view);
     }
 
     @NonNull
@@ -50,7 +51,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         return arrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
 
         private ImageView appImage;
         private TextView appName;
@@ -61,6 +62,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
             appName = itemView.findViewById( R.id.app_name );
 
             itemView.setOnClickListener( this );
+            itemView.setOnLongClickListener( this );
         }
 
         @Override
@@ -69,6 +71,15 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
             if(position>=0){
                 mListener.onClick( position );
             }
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            int position = getAdapterPosition();
+            if(position>=0){
+                mListener.onLongClick( position,view );
+            }
+            return true;
         }
     }
 }

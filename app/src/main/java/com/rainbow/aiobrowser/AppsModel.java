@@ -7,6 +7,9 @@ public class AppsModel {
     private String name, imageUrl, targetUrl, appType;
     int id;
 
+    public AppsModel() {
+    }
+
     public AppsModel(String name, String imageUrl, String targetUrl, String appType, int id) {
         this.name = name;
         this.imageUrl = imageUrl;
@@ -25,6 +28,14 @@ public class AppsModel {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
