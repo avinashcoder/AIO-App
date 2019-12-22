@@ -1,7 +1,9 @@
 package com.rainbow.aiobrowser;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +54,16 @@ public class AppsViewFragment extends Fragment {
 
 
     DatabaseHandler handler;
+
+    private BroadcastReceiver refreshFavourite = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(pageType.equalsIgnoreCase( "FAVOURITE" )){
+                arrayList = handler.getFavourite();
+                initView();
+            }
+        }
+    };
 
     public AppsViewFragment() {
         // Required empty public constructor
@@ -143,14 +156,17 @@ public class AppsViewFragment extends Fragment {
         }
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener( item -> {
+            LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
             switch (item.getItemId()){
                 case R.id.add:
                     handler.addFavourite( arrayList.get( position ) );
                     Toast.makeText(getContext(),arrayList.get( position ).getName()+" is added in your favourite", Toast.LENGTH_SHORT).show();
+                    startBroadCast();
                     return true;
                 case R.id.remove:
                     handler.removeFavourite( id );
                     Toast.makeText(getContext(),arrayList.get( position ).getName()+" is removed from your favourite", Toast.LENGTH_SHORT).show();
+                    startBroadCast();
                     return true;
             }
             return true;
@@ -158,6 +174,10 @@ public class AppsViewFragment extends Fragment {
         } );
 
         popup.show();
+    }
+    private void startBroadCast(){
+        Intent intent = new Intent("refresh");
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
     private void getDataFromServer() {
@@ -228,5 +248,13 @@ public class AppsViewFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onDestroy() {
+        if(refreshFavourite!=null){
+            LocalBroadcastManager.getInstance( getContext() ).unregisterReceiver( refreshFavourite );
+        }
+        super.onDestroy();
     }
 }
