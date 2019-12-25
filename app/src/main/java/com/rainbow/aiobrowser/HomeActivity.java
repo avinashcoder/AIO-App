@@ -297,4 +297,10 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
 
      */
 
+    @Override
+    protected void onPause() {
+        if(drawer.isDrawerOpen( GravityCompat.START ))
+            drawer.closeDrawer( GravityCompat.START );
+        super.onPause();
+    }
 }
