@@ -43,7 +43,11 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AppsModel model = arrayList.get( position );
         holder.appName.setText( model.getName() );
-        Glide.with( mContext ).load( model.getImageUrl() ).centerCrop().placeholder( null ).into( holder.appImage );
+        String url = model.getImageUrl();
+        if(!url.contains( "http" )){
+            url = "https://firebasestorage.googleapis.com/v0/b/all-in-one-d12ec.appspot.com/o/appicon%2F"+url+"?alt=media";
+        }
+        Glide.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
     }
 
     @Override

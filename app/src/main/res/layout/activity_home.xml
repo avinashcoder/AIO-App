@@ -1,97 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
-    android:background="#EDF0F9"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:background="#EDF0F9">
 
-    <LinearLayout
-        android:layout_height="match_parent"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-
-        <FrameLayout
-            android:layout_height="?attr/actionBarSize"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary">
 
                 <FrameLayout
-                    android:id="@+id/hMenuBtn"
-                    android:layout_gravity="start"
-                    android:layout_height="match_parent"
+                    android:id="@+id/search"
                     android:layout_width="wrap_content"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end|center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:visibility="visible">
 
                     <ImageView
-                        android:id="@+id/menuBtnIcon"
-                        android:layout_gravity="center"
-                        android:layout_height="24dp"
                         android:layout_width="24dp"
-                        android:src="@drawable/menu_icon" />
+                        android:layout_height="27dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/search"
+                        android:tint="#fff" />
 
                 </FrameLayout>
 
-                <TextView
-                    android:id="@+id/text_toolbar_title"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:text="All in one"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <FrameLayout
+                        android:id="@+id/headerMenuBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
 
-            <FrameLayout
-                android:id="@+id/search"
-                android:layout_gravity="end|center_vertical"
-                android:layout_height="match_parent"
-                android:layout_width="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:visibility="visible">
+                        <ImageView
+                            android:id="@+id/menuBtnIcon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/menu_icon"
+                            android:tint="@color/white" />
 
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_height="27dp"
-                    android:layout_width="24dp"
-                    android:src="@drawable/search_icon"
-                    android:tint="#fff" />
+                    </FrameLayout>
 
+                    <TextView
+                        android:id="@+id/text_toolbar_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:text="All in one"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
             </FrameLayout>
-        </FrameLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:background="@color/colorPrimary"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            app:tabIndicatorColor="@color/white"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/white" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:tabIndicatorColor="@color/white"
+                app:tabMode="scrollable"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextColor="@color/white" />
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent" />
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/drawer_layout" />
 
-</FrameLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

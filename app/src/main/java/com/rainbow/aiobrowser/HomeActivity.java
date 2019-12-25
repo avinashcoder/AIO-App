@@ -2,15 +2,21 @@ package com.rainbow.aiobrowser;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -20,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class HomeActivity extends AppCompatActivity implements AppsViewFragment.OnFragmentInteractionListener {
+public class HomeActivity extends AppCompatActivity implements AppsViewFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
 
     @BindView( R.id.tab_layout )
     TabLayout tabLayout;
@@ -28,6 +34,16 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
     ViewPager viewPager;
     @BindView( R.id.search )
     FrameLayout search;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.headerMenuBtn)
+    FrameLayout headerMenu;
+
+    View drawerView;
+    LinearLayout navFavourite,navHome,navSocial,navShopping,navEntertainment,navFood,navUtility,navSports,
+                navRechange,navNews,navTravel,navHealth,navOthers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +56,125 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         viewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem( 1,false );
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setItemIconTintList(null);
+
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
+                drawer.getChildAt(0).setTranslationX(slideOffset * drawerView.getWidth());
+                drawer.bringChildToFront(drawerView);
+                drawer.requestLayout();
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
+
+        drawerView = navigationView.getHeaderView( 0 );
+        initDrawerView();
+
+    }
+
+    private void initDrawerView() {
+        navFavourite = drawerView.findViewById( R.id.nav_favourite );
+        navHome = drawerView.findViewById( R.id.nav_home );
+        navSocial = drawerView.findViewById( R.id.nav_social );
+        navShopping = drawerView.findViewById( R.id.nav_shopping );
+        navEntertainment = drawerView.findViewById( R.id.nav_entertainment );
+        navFood = drawerView.findViewById( R.id.nav_food );
+        navUtility = drawerView.findViewById( R.id.nav_utility );
+        navSports = drawerView.findViewById( R.id.nav_sports );
+        navRechange = drawerView.findViewById( R.id.nav_recharge );
+        navNews = drawerView.findViewById( R.id.nav_news );
+        navTravel = drawerView.findViewById( R.id.nav_travel );
+        navHealth = drawerView.findViewById( R.id.nav_health );
+        navOthers = drawerView.findViewById( R.id.nav_others );
+
+        navFavourite.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 0 ,false);
+            headerMenuClicked();
+        } );
+
+        navHome.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 1,false );
+            headerMenuClicked();
+        } );
+
+        navSocial.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 2 ,false);
+            headerMenuClicked();
+        } );
+
+        navShopping.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 3 ,false);
+            headerMenuClicked();
+        } );
+
+        navEntertainment.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 4 ,false);
+            headerMenuClicked();
+        } );
+
+        navFood.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 5 ,false);
+            headerMenuClicked();
+        } );
+
+        navUtility.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 6 ,false);
+            headerMenuClicked();
+        } );
+
+        navSports.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 7 ,false);
+            headerMenuClicked();
+        } );
+
+        navRechange.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 8 ,false);
+            headerMenuClicked();
+        } );
+
+        navNews.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 9 ,false);
+            headerMenuClicked();
+        } );
+
+        navTravel.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 10 ,false);
+            headerMenuClicked();
+        } );
+
+        navHealth.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 11 ,false);
+            headerMenuClicked();
+        } );
+
+        navOthers.setOnClickListener( view -> {
+            viewPager.setCurrentItem( 12 ,false);
+            headerMenuClicked();
+        } );
+    }
+
+    @OnClick(R.id.headerMenuBtn)
+    void headerMenuClicked(){
+        if (drawer.isDrawerOpen( GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }else{
+            drawer.openDrawer( GravityCompat.START );
+        }
     }
 
     @Override
@@ -47,29 +182,9 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
 
     }
 
-    static class Adapter extends FragmentStatePagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public Adapter(FragmentManager manager) {
-            super(manager);
-        }
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-        void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        return false;
     }
 
     public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
@@ -151,6 +266,35 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
     }
     @OnClick(R.id.search)
     void searchKeyword(){
-        viewPager.setCurrentItem( 10,false );
+
     }
+
+    /*
+    static class Adapter extends FragmentStatePagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public Adapter(FragmentManager manager) {
+            super(manager);
+        }
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+        void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
+
+     */
+
 }

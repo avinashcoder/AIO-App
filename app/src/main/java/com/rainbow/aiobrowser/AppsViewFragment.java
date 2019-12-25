@@ -114,6 +114,7 @@ public class AppsViewFragment extends Fragment {
                 getDataFromServer();
             }
         }
+        LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
         return view;
     }
 
@@ -156,7 +157,6 @@ public class AppsViewFragment extends Fragment {
         }
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener( item -> {
-            LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
             switch (item.getItemId()){
                 case R.id.add:
                     handler.addFavourite( arrayList.get( position ) );
@@ -212,6 +212,23 @@ public class AppsViewFragment extends Fragment {
             try {
                 AppsModel model  = new AppsModel( jsonArray.getJSONObject( i ) );
                 if(model.getAppType().equalsIgnoreCase( filter ) || filter.equalsIgnoreCase( "ALL" )){
+                    arrayList.add( model );
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    public void searchApp(String key){
+        arrayList.clear();
+        for(int i=0;i<jsonArray.length();i++){
+            try {
+                AppsModel model  = new AppsModel( jsonArray.getJSONObject( i ) );
+                if(model.getAppType().equalsIgnoreCase( filter ) || filter.equalsIgnoreCase( "ALL" )){
+                    if(key.equals( "" ) || model.getName().contains( key ))
                     arrayList.add( model );
                 }
 
