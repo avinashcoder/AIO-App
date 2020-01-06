@@ -447,13 +447,7 @@ public class AdvancedWebView extends WebView {
         webSettings.setBuiltInZoomControls( false );
         webSettings.setJavaScriptEnabled( true );
         webSettings.setDomStorageEnabled( true );
-        if (Build.VERSION.SDK_INT < 18) {
-            webSettings.setRenderPriority( WebSettings.RenderPriority.HIGH );
-        }
         webSettings.setDatabaseEnabled( true );
-        if (Build.VERSION.SDK_INT < 19) {
-            webSettings.setDatabasePath( databaseDir );
-        }
         setMixedContentAllowed( webSettings, true );
 
         setThirdPartyCookiesEnabled( true );

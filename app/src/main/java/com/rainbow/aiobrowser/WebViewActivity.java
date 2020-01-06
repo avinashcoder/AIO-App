@@ -15,7 +15,9 @@ import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +34,10 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
     AdvancedWebView mWebView;
     @BindView( R.id.progressBar )
     ProgressBar progressBar;
+    @BindView( R.id.error_layout )
+    LinearLayout errorLayout;
+    @BindView( R.id.error_text )
+    TextView errorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +101,8 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
-
+        errorText.setText( "Something went wrong\n\n"+description );
+        errorLayout.setVisibility( View.VISIBLE );
     }
 
     @Override
@@ -146,6 +153,7 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
     public void onBackPressed() {
         if(mWebView.canGoBack()){
             mWebView.goBack();
+            errorLayout.setVisibility( View.GONE );
         }else{
             super.onBackPressed();
         }
