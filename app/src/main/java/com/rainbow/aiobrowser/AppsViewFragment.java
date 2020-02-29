@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -24,6 +26,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +55,12 @@ public class AppsViewFragment extends Fragment {
 
     @BindView( R.id.recyclerView )
     RecyclerView recyclerView;
+    @BindView(R.id.no_favourite_layout)
+    LinearLayout noFavouriteLayout;
+    @BindView(R.id.no_app)
+    TextView noApp;
+    @BindView(R.id.adView)
+    AdView mAdView;
 
 
     DatabaseHandler handler;
@@ -115,6 +125,8 @@ public class AppsViewFragment extends Fragment {
             }
         }
         LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         return view;
     }
 
@@ -141,6 +153,15 @@ public class AppsViewFragment extends Fragment {
         } );
         recyclerView.setAdapter( adapter );
         adapter.notifyDataSetChanged();
+        if(arrayList.size()==0){
+            if(pageType.equalsIgnoreCase("FAVOURITE")){
+                noFavouriteLayout.setVisibility(View.VISIBLE);
+                noApp.setVisibility(View.GONE);
+            }
+        }else{
+            noFavouriteLayout.setVisibility(View.GONE);
+            noApp.setVisibility(View.GONE);
+        }
     }
 
     private void createPopUp(int position, View view) {
@@ -220,6 +241,16 @@ public class AppsViewFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+        if(arrayList.size()==0){
+            if(pageType.equalsIgnoreCase("FAVOURITE")){
+                noFavouriteLayout.setVisibility(View.VISIBLE);
+                noApp.setVisibility(View.GONE);
+            }else{
+                noFavouriteLayout.setVisibility(View.GONE);
+                noApp.setVisibility(View.VISIBLE);
+            }
+
+        }
     }
 
     public void searchApp(String key){

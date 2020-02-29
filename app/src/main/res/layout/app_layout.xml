@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/app_image"
-            android:layout_width="64dp"
-            android:layout_height="64dp" />
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
         <TextView
             android:id="@+id/app_name"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:text="App Name"
             android:gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:textColor="@color/black"
             android:textSize="14sp"/>
 
