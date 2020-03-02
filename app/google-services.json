@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "417428373438",
+    "firebase_url": "https://all-in-one-d12ec.firebaseio.com",
+    "project_id": "all-in-one-d12ec",
+    "storage_bucket": "all-in-one-d12ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417428373438:android:c6e2097cddaa2a34d6c3ef",
+        "android_client_info": {
+          "package_name": "com.rainbow.aiobrowser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417428373438-l7lne1i7b61bk8ehdokeadj3f6854qql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rainbow.aiobrowser",
+            "certificate_hash": "5ab97af41589c95dfb809df79c49f742e85f2103"
+          }
+        },
+        {
+          "client_id": "417428373438-43g7t4bor8or1g96mfn5pt6jb8tossj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGlKJ44DJJ4tREPu9Vqv8MvksB5p7qDRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417428373438-43g7t4bor8or1g96mfn5pt6jb8tossj0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

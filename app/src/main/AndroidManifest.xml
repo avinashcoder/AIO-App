@@ -55,6 +55,10 @@
 <!--            android:name="com.razorpay.ApiKey"-->
 <!--            android:value="rzp_live_xEheLEREck6WPO" />-->
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5669739652767362~2602236476"/>
+
 
     </application>
 
