@@ -496,8 +496,10 @@ public class AdvancedWebView extends WebView {
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
                 // if the hostname may not be accessed
-                if (url.startsWith( "intent://" )) {
-                    try {
+                if (!url.contains("http")) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    context.startActivity(browserIntent);
+                    /*try {
                         Context context = view.getContext();
                         Intent intent = Intent.parseUri( url, Intent.URI_INTENT_SCHEME );
 
@@ -520,7 +522,7 @@ public class AdvancedWebView extends WebView {
                             }
                             return true;
                         }
-                    } catch (URISyntaxException e) { }
+                    } catch (URISyntaxException e) { }*/
                 } else {
                     if (!isHostnameAllowed( url )) {
                         // if a listener is available

@@ -203,9 +203,8 @@ public class AppsViewFragment extends Fragment {
 
     private void getDataFromServer() {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url ="https://allinoneappbrowser.000webhostapp.com/allinone/getappdata.php";
 
-        StringRequest stringRequest = new StringRequest( Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, Helper.API_END_POINT,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "417428373438-saa9ul3oq1nhmcv2f7htqhnk7us5sc6h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rainbow.aiobrowser",
+            "certificate_hash": "be127fb2a635e8e5674fc178fdcdb73a0b623640"
+          }
+        },
+        {
           "client_id": "417428373438-l7lne1i7b61bk8ehdokeadj3f6854qql.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -41,7 +49,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-5669739652767362~2602236476"
     }
   ],
   "configuration_version": "1"

@@ -21,8 +21,28 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_splash );
-        pref = getSharedPreferences( "PREFERENCES",MODE_PRIVATE );
-        if(pref.getString( "DATA","" ).equals( "" )){
+        pref = getSharedPreferences(Helper.MyPreference, MODE_PRIVATE);
+
+        fetchFromRemoteConfig();
+    }
+
+    private void fetchFromRemoteConfig(){
+        (new MyRemoteConfigs(getApplication(), new MyRemoteConfigs.CallBackFn() {
+            @Override
+            public void configLoaded() {
+                checkAndGetData();
+            }
+
+            @Override
+            public void onFailed() {
+                fetchFromRemoteConfig();
+            }
+
+        })).fetch();
+    }
+
+    private void checkAndGetData(){
+        if(pref.getString( Helper.SP_DATA,"" ).equals( "" )){
             getDataFromServer();
         }else{
             gotoHomePage();
@@ -37,14 +57,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private void getDataFromServer() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://allinoneappbrowser.000webhostapp.com/allinone/getappdata.php";
 
-        StringRequest stringRequest = new StringRequest( Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, Helper.API_END_POINT,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         SharedPreferences.Editor editor = pref.edit();
-                        editor.putString( "DATA",response );
+                        editor.putString( Helper.SP_DATA,response );
                         editor.apply();
                         gotoHomePage();
                     }
