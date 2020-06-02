@@ -3,9 +3,11 @@
     xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.rainbow.aiobrowser">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <dist:module dist:instant="true" />
 
     <application
         android:allowBackup="true"
@@ -14,47 +16,45 @@
         android:roundIcon="@drawable/allinone"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SearchActivity"></activity>
         <activity android:name=".WebViewActivity" />
         <activity android:name=".HomeActivity" />
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
-                <data android:scheme="https"
+                <data
                     android:host="www.rainbowsoftware.com"
-                    android:pathPrefix="/allinone" />
-                <!-- note that the leading "/" is required for pathPrefix-->
+                    android:pathPrefix="/allinone"
+                    android:scheme="https" />
+                <!-- note that the leading "/" is required for pathPrefix -->
             </intent-filter>
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "example://gizmos” -->
-                <data android:scheme="allinone"
-                    android:host="allinone" />
+                <data
+                    android:host="allinone"
+                    android:scheme="allinone" />
             </intent-filter>
-
-
-        </activity>
-
-<!--        <meta-data-->
-<!--            android:name="com.razorpay.ApiKey"-->
-<!--            android:value="rzp_test_bGNMFVRxk9Mgzp" />-->
-
-<!--        <meta-data-->
-<!--            android:name="com.razorpay.ApiKey"-->
-<!--            android:value="rzp_live_xEheLEREck6WPO" />-->
-
+        </activity> <!-- <meta-data -->
+        <!-- android:name="com.razorpay.ApiKey" -->
+        <!-- android:value="rzp_test_bGNMFVRxk9Mgzp" /> -->
+        <!-- <meta-data -->
+        <!-- android:name="com.razorpay.ApiKey" -->
+        <!-- android:value="rzp_live_xEheLEREck6WPO" /> -->
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -63,11 +63,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5669739652767362~2602236476"/>
-
-
+            android:value="ca-app-pub-5669739652767362~2602236476" />
     </application>
-
-    <dist:module dist:instant="true" />
 
 </manifest>
