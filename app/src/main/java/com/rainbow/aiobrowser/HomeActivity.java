@@ -1,5 +1,6 @@
 package com.rainbow.aiobrowser;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -266,7 +267,9 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
     }
     @OnClick(R.id.search)
     void searchKeyword(){
-
+        Intent intent = new Intent(this,SearchActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
     }
 
     /*
