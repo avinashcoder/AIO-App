@@ -6,6 +6,7 @@ import org.json.JSONObject;
 public class AppsModel {
     private String name, imageUrl, targetUrl, appType;
     int id;
+    Boolean selected = false;
 
     public AppsModel() {
     }
@@ -68,5 +69,13 @@ public class AppsModel {
 
     public void setAppType(String appType) {
         this.appType = appType;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }

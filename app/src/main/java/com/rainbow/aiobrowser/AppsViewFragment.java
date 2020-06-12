@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class AppsViewFragment extends Fragment {
 
@@ -61,6 +63,8 @@ public class AppsViewFragment extends Fragment {
     TextView noApp;
     @BindView(R.id.adView)
     AdView mAdView;
+    @BindView(R.id.add_favourite)
+    FloatingActionButton add_new_favourite;
 
 
     DatabaseHandler handler;
@@ -98,8 +102,10 @@ public class AppsViewFragment extends Fragment {
         handler = new DatabaseHandler( getContext() );
 
         if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
+            //add_new_favourite.show();
             arrayList = handler.getFavourite();
         }else {
+            //add_new_favourite.hide();
             pref = getContext().getSharedPreferences( "PREFERENCES", Context.MODE_PRIVATE );
             String response = pref.getString( "DATA", "" );
             try {
@@ -269,6 +275,13 @@ public class AppsViewFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    @OnClick(R.id.add_favourite)
+    void addNewFavourite(){
+        Intent intent = new Intent(getContext(),SearchActivity.class);
+        intent.putExtra("ACTION","FAVOURITE");
+        startActivity(intent);
+    }
+
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -303,5 +316,14 @@ public class AppsViewFragment extends Fragment {
             LocalBroadcastManager.getInstance( getContext() ).unregisterReceiver( refreshFavourite );
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(pageType.equalsIgnoreCase("FAVOURITE")){
+            arrayList = handler.getFavourite();
+            initView();
+        }
     }
 }
