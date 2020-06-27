@@ -64,7 +64,7 @@ public class AppsViewFragment extends Fragment {
     @BindView(R.id.adView)
     AdView mAdView;
     @BindView(R.id.add_favourite)
-    FloatingActionButton add_new_favourite;
+    FloatingActionButton addFavNew;
 
 
     DatabaseHandler handler;
@@ -102,10 +102,8 @@ public class AppsViewFragment extends Fragment {
         handler = new DatabaseHandler( getContext() );
 
         if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
-            //add_new_favourite.show();
             arrayList = handler.getFavourite();
         }else {
-            //add_new_favourite.hide();
             pref = getContext().getSharedPreferences( "PREFERENCES", Context.MODE_PRIVATE );
             String response = pref.getString( "DATA", "" );
             try {
@@ -129,6 +127,11 @@ public class AppsViewFragment extends Fragment {
             }else{
                 getDataFromServer();
             }
+        }
+        if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
+            addFavNew.setVisibility(View.VISIBLE);
+        }else{
+            addFavNew.setVisibility(View.GONE);
         }
         LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
         AdRequest adRequest = new AdRequest.Builder().build();
