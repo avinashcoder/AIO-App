@@ -1,22 +1,19 @@
 package com.rainbow.aiobrowser;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +48,8 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         handler = new DatabaseHandler( this );
         Intent i = getIntent();
@@ -146,6 +145,16 @@ public class SearchActivity extends AppCompatActivity {
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+        if(pageAction.equalsIgnoreCase("FAVOURITE")){
+            favouriteList = handler.getFavourite();
+            for(int i = 0;i<favouriteList.size();i++){
+                for(int j = 0;j<arrayList.size();j++){
+                    if(favouriteList.get(i).id == arrayList.get(j).id){
+                        arrayList.get(j).setSelected(true);
+                    }
+                }
             }
         }
         adapter.notifyDataSetChanged();
