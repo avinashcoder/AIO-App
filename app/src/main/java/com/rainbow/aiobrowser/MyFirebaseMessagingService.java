@@ -4,6 +4,8 @@ package com.rainbow.aiobrowser;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,17 +13,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.Html;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import android.text.Html;
-import android.util.Log;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -33,6 +32,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     String title,notificationBody,imageUrl;
     SharedPreferences pref;
+    Intent intent;
+    PendingIntent pendingIntent;
 
     @Override
     public void onNewToken(String token) {
@@ -45,7 +46,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         pref = getSharedPreferences(Helper.MyPreference,Context.MODE_PRIVATE);
-
+        intent = new Intent(this,SplashActivity.class);
         createNotification(remoteMessage);
 
     }
@@ -68,6 +69,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         if(notificationExtraData.containsKey( "image" )){
             imageUrl = notificationExtraData.get( "image" );
+        }
+        if(notificationExtraData.containsKey("url")){
+            String url = notificationExtraData.get("url");
+            intent = new Intent(this, WebViewActivity.class);
+            intent.putExtra("URL",url);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+            taskStackBuilder.addParentStack(HomeActivity.class);
+            taskStackBuilder.addNextIntentWithParentStack(intent);
+            pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
 
         if(notificationExtraData.containsKey("clear_data") || notificationExtraData.containsKey("cache_expire")){
@@ -99,7 +109,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     });
         }else{
             NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE);
-            String NOTIFICATION_CHANNEL_ID = "DemoId";
+            String NOTIFICATION_CHANNEL_ID = "AIO";
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
@@ -112,14 +122,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
             Context context = this;
+            //PendingIntent pendingIntent = PendingIntent.getActivity(context,100,intent,PendingIntent.FLAG_CANCEL_CURRENT);
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_launcher_background)
                     .setContentTitle( title)
-                    .setAutoCancel(true)
+                    //.setAutoCancel(true)
                     .setContentText(notificationBody)
                     .setLargeIcon(resource)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText( Html.fromHtml(notificationBody)))
                     .setShowWhen(true)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
                     .setWhen(System.currentTimeMillis())
                     .setPriority( Notification.PRIORITY_MAX);
 
@@ -132,7 +145,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void createNotificationWithImage(RemoteMessage remoteMessage, Bitmap resource) {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE);
-        String NOTIFICATION_CHANNEL_ID = "DemoId";
+        String NOTIFICATION_CHANNEL_ID = "AIO";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
@@ -145,6 +158,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
         Context context = this;
+        //PendingIntent pendingIntent = PendingIntent.getActivity(context,100,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle( title)
@@ -157,6 +171,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setLargeIcon(resource)
                 .setShowWhen(true)
                 .setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent)
+                //.setAutoCancel(true)
                 .setPriority( Notification.PRIORITY_MAX);
 
 

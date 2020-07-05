@@ -86,6 +86,13 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         drawerView = navigationView.getHeaderView( 0 );
         initDrawerView();
 
+        Intent intentData = getIntent();
+        if(intentData.hasExtra("URL")){
+            Intent i = new Intent(this,WebViewActivity.class);
+            i.putExtra("URL",intentData.getExtras().getString("URL"));
+            startActivity(i);
+        }
+
     }
 
     private void initDrawerView() {

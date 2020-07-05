@@ -3,6 +3,7 @@ package com.rainbow.aiobrowser;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,12 +17,21 @@ import com.android.volley.toolbox.Volley;
 public class SplashActivity extends AppCompatActivity {
 
     SharedPreferences pref;
+    String notificationData = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_splash );
         pref = getSharedPreferences(Helper.MyPreference, MODE_PRIVATE);
+
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                if(key.equalsIgnoreCase("url"))
+                    notificationData = getIntent().getExtras().getString(key);
+                Log.d("Splash", "Key: " + key + " Value: " + getIntent().getExtras().getString(key));
+            }
+        }
 
         fetchFromRemoteConfig();
     }
@@ -51,6 +61,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private void gotoHomePage() {
         Intent i = new Intent( this,HomeActivity.class );
+        if(!notificationData.isEmpty())
+            i.putExtra("URL",notificationData);
         startActivity( i );
         finish();
     }
