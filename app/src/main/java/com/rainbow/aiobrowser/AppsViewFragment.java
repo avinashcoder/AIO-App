@@ -56,7 +56,7 @@ public class AppsViewFragment extends Fragment {
     private JSONArray jsonArray;
     private AppsAdapter adapter;
 
-    @BindView( R.id.recyclerView )
+    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.no_favourite_layout)
     LinearLayout noFavouriteLayout;
@@ -64,6 +64,8 @@ public class AppsViewFragment extends Fragment {
     TextView noApp;
     @BindView(R.id.adView)
     AdView mAdView;
+    @BindView(R.id.ad_big_banner)
+    AdView mAdViewBig;
     @BindView(R.id.add_favourite)
     FloatingActionButton addFavNew;
     @BindView(R.id.no_app_msg)
@@ -75,7 +77,7 @@ public class AppsViewFragment extends Fragment {
     private BroadcastReceiver refreshFavourite = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(pageType.equalsIgnoreCase( "FAVOURITE" )){
+            if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 arrayList = handler.getFavourite();
                 initView();
             }
@@ -89,28 +91,28 @@ public class AppsViewFragment extends Fragment {
     public static AppsViewFragment newInstance(String pageType, String filterApp) {
         AppsViewFragment fragment = new AppsViewFragment();
         Bundle args = new Bundle();
-        args.putString( PAGE_TYPE, pageType );
-        args.putString( FILTER, filterApp );
-        fragment.setArguments( args );
+        args.putString(PAGE_TYPE, pageType);
+        args.putString(FILTER, filterApp);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
+        super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            pageType = getArguments().getString( PAGE_TYPE );
-            filter = getArguments().getString( FILTER );
+            pageType = getArguments().getString(PAGE_TYPE);
+            filter = getArguments().getString(FILTER);
         }
-        handler = new DatabaseHandler( getContext() );
+        handler = new DatabaseHandler(getContext());
 
-        if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
+        if (pageType.equalsIgnoreCase("FAVOURITE")) {
             arrayList = handler.getFavourite();
-        }else {
-            pref = getContext().getSharedPreferences( "PREFERENCES", Context.MODE_PRIVATE );
-            String response = pref.getString( "DATA", "" );
+        } else {
+            pref = getContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
+            String response = pref.getString("DATA", "");
             try {
-                jsonArray = new JSONArray( response );
+                jsonArray = new JSONArray(response);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -120,24 +122,25 @@ public class AppsViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate( R.layout.fragment_apps_view, container, false );
-        ButterKnife.bind( this,view );
+        View view = inflater.inflate(R.layout.fragment_apps_view, container, false);
+        ButterKnife.bind(this, view);
         initView();
-        if(pageType.equalsIgnoreCase( "HOST" )){
-            if(jsonArray.length()!=0){
+        if (pageType.equalsIgnoreCase("HOST")) {
+            if (jsonArray.length() != 0) {
                 decodeData();
-            }else{
+            } else {
                 getDataFromServer();
             }
         }
-        if(pageType.equalsIgnoreCase( "FAVOURITE" )) {
+        if (pageType.equalsIgnoreCase("FAVOURITE")) {
             addFavNew.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             addFavNew.setVisibility(View.GONE);
         }
-        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver(refreshFavourite, new IntentFilter("refresh"));
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+        mAdViewBig.loadAd(adRequest);
         return view;
     }
 
@@ -146,69 +149,72 @@ public class AppsViewFragment extends Fragment {
         builder.setShowTitle( false );
         builder.enableUrlBarHiding();
         CustomTabsIntent customTabsIntent = builder.build();*/
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new AppsAdapter( getContext(), arrayList, new AppsAdapter.AppClickInterface() {
+        adapter = new AppsAdapter(getContext(), arrayList, new AppsAdapter.AppClickInterface() {
             @Override
             public void onClick(int position) {
                 //customTabsIntent.launchUrl(getContext(), Uri.parse(arrayList.get( position ).getTargetUrl()));
-                Intent intent = new Intent( getContext(),WebViewActivity.class );
-                intent.putExtra( "URL",arrayList.get( position ).getTargetUrl() );
-                startActivity( intent );
+                Intent intent = new Intent(getContext(), WebViewActivity.class);
+                intent.putExtra("URL", arrayList.get(position).getTargetUrl());
+                startActivity(intent);
             }
 
             @Override
             public void onLongClick(int position, View view) {
-                createPopUp(position,view);
+                createPopUp(position, view);
             }
-        } );
-        recyclerView.setAdapter( adapter );
+        });
+        recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        if(arrayList.size()==0){
+        if (arrayList.size() == 0) {
             noFavouriteLayout.setVisibility(View.VISIBLE);
-            if(pageType.equalsIgnoreCase("FAVOURITE")){
+            mAdViewBig.setVisibility(View.GONE);
+            if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
-            }else{
+            } else {
                 noAppMsg.setText("Currently, no app available in this section");
             }
-        }else{
+        } else {
             noFavouriteLayout.setVisibility(View.GONE);
+            mAdViewBig.setVisibility(View.VISIBLE);
         }
     }
 
     private void createPopUp(int position, View view) {
-        PopupMenu popup = new PopupMenu(getContext(),view);
-        int id = arrayList.get( position ).getId();
+        PopupMenu popup = new PopupMenu(getContext(), view);
+        int id = arrayList.get(position).getId();
         //Inflating the Popup using xml file
         popup.getMenuInflater().inflate(R.menu.app_popup_menu, popup.getMenu());
-        if(handler.checkList( id )){
-            popup.getMenu().findItem( R.id.add ).setVisible( false );
-            popup.getMenu().findItem( R.id.remove ).setVisible( true );
-        }else{
-            popup.getMenu().findItem( R.id.add ).setVisible( true );
-            popup.getMenu().findItem( R.id.remove ).setVisible( false );
+        if (handler.checkList(id)) {
+            popup.getMenu().findItem(R.id.add).setVisible(false);
+            popup.getMenu().findItem(R.id.remove).setVisible(true);
+        } else {
+            popup.getMenu().findItem(R.id.add).setVisible(true);
+            popup.getMenu().findItem(R.id.remove).setVisible(false);
         }
         //registering popup with OnMenuItemClickListener
-        popup.setOnMenuItemClickListener( item -> {
-            switch (item.getItemId()){
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
                 case R.id.add:
-                    handler.addFavourite( arrayList.get( position ) );
-                    Toast.makeText(getContext(),arrayList.get( position ).getName()+" is added in your favourite", Toast.LENGTH_SHORT).show();
+                    handler.addFavourite(arrayList.get(position));
+                    Toast.makeText(getContext(), arrayList.get(position).getName() + " is added in your favourite", Toast.LENGTH_SHORT).show();
                     startBroadCast();
                     return true;
                 case R.id.remove:
-                    handler.removeFavourite( id );
-                    Toast.makeText(getContext(),arrayList.get( position ).getName()+" is removed from your favourite", Toast.LENGTH_SHORT).show();
+                    handler.removeFavourite(id);
+                    Toast.makeText(getContext(), arrayList.get(position).getName() + " is removed from your favourite", Toast.LENGTH_SHORT).show();
                     startBroadCast();
                     return true;
             }
             return true;
 
-        } );
+        });
 
         popup.show();
     }
-    private void startBroadCast(){
+
+    private void startBroadCast() {
         Intent intent = new Intent("refresh");
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).sendBroadcast(intent);
     }
@@ -216,15 +222,15 @@ public class AppsViewFragment extends Fragment {
     private void getDataFromServer() {
         RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
 
-        StringRequest stringRequest = new StringRequest( Request.Method.GET, Helper.API_END_POINT,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Helper.API_END_POINT,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            jsonArray = new JSONArray( response );
+                            jsonArray = new JSONArray(response);
                             decodeData();
                             SharedPreferences.Editor editor = pref.edit();
-                            editor.putString( "DATA",response );
+                            editor.putString("DATA", response);
                             editor.apply();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -239,12 +245,12 @@ public class AppsViewFragment extends Fragment {
         queue.add(stringRequest);
     }
 
-    private void decodeData(){
-        for(int i=0;i<jsonArray.length();i++){
+    private void decodeData() {
+        for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                AppsModel model  = new AppsModel( jsonArray.getJSONObject( i ) );
-                if(model.getAppType().equalsIgnoreCase( filter ) || filter.equalsIgnoreCase( "ALL" )){
-                    arrayList.add( model );
+                AppsModel model = new AppsModel(jsonArray.getJSONObject(i));
+                if (model.getAppType().equalsIgnoreCase(filter) || filter.equalsIgnoreCase("ALL")) {
+                    arrayList.add(model);
                 }
 
             } catch (JSONException e) {
@@ -252,27 +258,29 @@ public class AppsViewFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
-        if(arrayList.size()==0){
+        if (arrayList.size() == 0) {
             noFavouriteLayout.setVisibility(View.VISIBLE);
-            if(pageType.equalsIgnoreCase("FAVOURITE")){
+            mAdViewBig.setVisibility(View.GONE);
+            if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
-            }else{
+            } else {
                 noAppMsg.setText("Currently, no app available in this section");
             }
 
-        }else{
+        } else {
             noFavouriteLayout.setVisibility(View.GONE);
+            mAdViewBig.setVisibility(View.VISIBLE);
         }
     }
 
-    public void searchApp(String key){
+    public void searchApp(String key) {
         arrayList.clear();
-        for(int i=0;i<jsonArray.length();i++){
+        for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                AppsModel model  = new AppsModel( jsonArray.getJSONObject( i ) );
-                if(model.getAppType().equalsIgnoreCase( filter ) || filter.equalsIgnoreCase( "ALL" )){
-                    if(key.equals( "" ) || model.getName().contains( key ))
-                    arrayList.add( model );
+                AppsModel model = new AppsModel(jsonArray.getJSONObject(i));
+                if (model.getAppType().equalsIgnoreCase(filter) || filter.equalsIgnoreCase("ALL")) {
+                    if (key.equals("") || model.getName().contains(key))
+                        arrayList.add(model);
                 }
 
             } catch (JSONException e) {
@@ -282,28 +290,30 @@ public class AppsViewFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    @OnClick({R.id.add_favourite,R.id.no_favourite_layout})
-    void addNewFavourite(){
-        Intent intent = new Intent(getContext(),SearchActivity.class);
-        intent.putExtra("ACTION","FAVOURITE");
-        startActivity(intent);
+    @OnClick({R.id.add_favourite, R.id.no_favourite_layout})
+    void addNewFavourite() {
+        if (pageType.equalsIgnoreCase("FAVOURITE")) {
+            Intent intent = new Intent(getContext(), SearchActivity.class);
+            intent.putExtra("ACTION", "FAVOURITE");
+            startActivity(intent);
+        }
     }
 
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction( uri );
+            mListener.onFragmentInteraction(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
-        super.onAttach( context );
+        super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException( context.toString()
-                    + " must implement OnFragmentInteractionListener" );
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -319,8 +329,8 @@ public class AppsViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if(refreshFavourite!=null){
-            LocalBroadcastManager.getInstance( getContext() ).unregisterReceiver( refreshFavourite );
+        if (refreshFavourite != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshFavourite);
         }
         super.onDestroy();
     }
@@ -328,7 +338,7 @@ public class AppsViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(pageType.equalsIgnoreCase("FAVOURITE")){
+        if (pageType.equalsIgnoreCase("FAVOURITE")) {
             arrayList = handler.getFavourite();
             initView();
         }

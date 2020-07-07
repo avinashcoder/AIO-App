@@ -82,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.d("Volley error",error.toString());
             }
         });
         queue.add(stringRequest);
