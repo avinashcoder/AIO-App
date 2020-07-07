@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +53,7 @@ public class AppsViewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private SharedPreferences pref;
-    JSONArray jsonArray;
+    private JSONArray jsonArray;
     private AppsAdapter adapter;
 
     @BindView( R.id.recyclerView )
@@ -65,9 +66,11 @@ public class AppsViewFragment extends Fragment {
     AdView mAdView;
     @BindView(R.id.add_favourite)
     FloatingActionButton addFavNew;
+    @BindView(R.id.no_app_msg)
+    TextView noAppMsg;
 
 
-    DatabaseHandler handler;
+    private DatabaseHandler handler;
 
     private BroadcastReceiver refreshFavourite = new BroadcastReceiver() {
         @Override
@@ -117,7 +120,6 @@ public class AppsViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate( R.layout.fragment_apps_view, container, false );
         ButterKnife.bind( this,view );
         initView();
@@ -133,17 +135,17 @@ public class AppsViewFragment extends Fragment {
         }else{
             addFavNew.setVisibility(View.GONE);
         }
-        LocalBroadcastManager.getInstance( getContext() ).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver( refreshFavourite,new IntentFilter( "refresh" ) );
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         return view;
     }
 
     private void initView() {
-//        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-//        builder.setShowTitle( false );
-//        builder.enableUrlBarHiding();
-//        CustomTabsIntent customTabsIntent = builder.build();
+       /* CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        builder.setShowTitle( false );
+        builder.enableUrlBarHiding();
+        CustomTabsIntent customTabsIntent = builder.build();*/
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new AppsAdapter( getContext(), arrayList, new AppsAdapter.AppClickInterface() {
@@ -163,13 +165,14 @@ public class AppsViewFragment extends Fragment {
         recyclerView.setAdapter( adapter );
         adapter.notifyDataSetChanged();
         if(arrayList.size()==0){
+            noFavouriteLayout.setVisibility(View.VISIBLE);
             if(pageType.equalsIgnoreCase("FAVOURITE")){
-                noFavouriteLayout.setVisibility(View.VISIBLE);
-                noApp.setVisibility(View.GONE);
+                noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
+            }else{
+                noAppMsg.setText("Currently, no app available in this section");
             }
         }else{
             noFavouriteLayout.setVisibility(View.GONE);
-            noApp.setVisibility(View.GONE);
         }
     }
 
@@ -207,11 +210,11 @@ public class AppsViewFragment extends Fragment {
     }
     private void startBroadCast(){
         Intent intent = new Intent("refresh");
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).sendBroadcast(intent);
     }
 
     private void getDataFromServer() {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getContext()));
 
         StringRequest stringRequest = new StringRequest( Request.Method.GET, Helper.API_END_POINT,
                 new Response.Listener<String>() {
@@ -250,14 +253,15 @@ public class AppsViewFragment extends Fragment {
         }
         adapter.notifyDataSetChanged();
         if(arrayList.size()==0){
+            noFavouriteLayout.setVisibility(View.VISIBLE);
             if(pageType.equalsIgnoreCase("FAVOURITE")){
-                noFavouriteLayout.setVisibility(View.VISIBLE);
-                noApp.setVisibility(View.GONE);
+                noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
             }else{
-                noFavouriteLayout.setVisibility(View.GONE);
-                noApp.setVisibility(View.VISIBLE);
+                noAppMsg.setText("Currently, no app available in this section");
             }
 
+        }else{
+            noFavouriteLayout.setVisibility(View.GONE);
         }
     }
 
@@ -278,7 +282,7 @@ public class AppsViewFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    @OnClick(R.id.add_favourite)
+    @OnClick({R.id.add_favourite,R.id.no_favourite_layout})
     void addNewFavourite(){
         Intent intent = new Intent(getContext(),SearchActivity.class);
         intent.putExtra("ACTION","FAVOURITE");
