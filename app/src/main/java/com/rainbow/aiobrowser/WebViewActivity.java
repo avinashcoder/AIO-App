@@ -2,12 +2,14 @@ package com.rainbow.aiobrowser;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -38,6 +40,8 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
     LinearLayout errorLayout;
     @BindView( R.id.error_text )
     TextView errorText;
+
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,11 +155,27 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
 
     @Override
     public void onBackPressed() {
+
+        if (doubleBackToExitPressedOnce) {
+            // finish();
+            super.onBackPressed();
+            return;
+        }
+
         if(mWebView.canGoBack()){
+            this.doubleBackToExitPressedOnce = true;
+            // Toast message
+            showToast();
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
             mWebView.goBack();
             errorLayout.setVisibility( View.GONE );
         }else{
             super.onBackPressed();
         }
+    }
+    private void showToast() {
+        Context mContext = getApplicationContext();
+        if (mContext != null)
+            Toast.makeText(mContext, "Please click again to exit", Toast.LENGTH_SHORT).show();
     }
 }

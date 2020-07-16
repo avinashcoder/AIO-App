@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_gravity="center"
+    tools:context=".NoInternetDialogFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="175dp"
+            android:src="@drawable/error"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Internet Connectivity !!"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please check your internet connection and retry"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"/>
+
+        <View
+            android:background="#E6E6E6"
+            android:layout_height="1dp"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="21">
+
+            <TextView
+                android:id="@+id/close"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:fontFamily="sans-serif"
+                android:padding="5dp"
+                android:text="CLOSE"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp">
+
+                <View
+                    android:background="#E6E6E6"
+                    android:layout_height="match_parent"
+                    android:layout_width="1dp" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/retry"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:padding="5dp"
+                android:text="RETRY"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -14,10 +14,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity implements NoInternetDialogFragment.OnFragmentInteractionListener {
 
     SharedPreferences pref;
     String notificationData = "";
+    CheckInternetConnection internetConnection;
+    NoInternetDialogFragment noInternetDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,19 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
-        fetchFromRemoteConfig();
+        internetConnection = new CheckInternetConnection(this);
+        tryToLoad();
+
+    }
+
+    void tryToLoad(){
+        if(internetConnection.isConnectingToInternet()){
+            fetchFromRemoteConfig();
+        }else{
+            noInternetDialogFragment = new NoInternetDialogFragment();
+            noInternetDialogFragment.setCancelable(false);
+            noInternetDialogFragment.show(this.getSupportFragmentManager(),"No_Internet");
+        }
     }
 
     private void fetchFromRemoteConfig(){
@@ -86,5 +100,17 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
+    }
+
+    @Override
+    public void retry() {
+        noInternetDialogFragment.dismiss();
+        tryToLoad();
+    }
+
+    @Override
+    public void closeApp() {
+        noInternetDialogFragment.dismiss();
+        finish();
     }
 }
