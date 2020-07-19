@@ -19,6 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_home );
         ButterKnife.bind( this );
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
 
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -141,7 +143,7 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         } );
 
         navUtility.setOnClickListener( view -> {
-            viewPager.setCurrentItem( 6 ,false);
+            viewPager.setCurrentItem( 11 ,false);
             headerMenuClicked();
         } );
 
@@ -156,17 +158,17 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         } );
 
         navNews.setOnClickListener( view -> {
-            viewPager.setCurrentItem( 9 ,false);
+            viewPager.setCurrentItem( 6 ,false);
             headerMenuClicked();
         } );
 
         navTravel.setOnClickListener( view -> {
-            viewPager.setCurrentItem( 10 ,false);
+            viewPager.setCurrentItem( 9 ,false);
             headerMenuClicked();
         } );
 
         navHealth.setOnClickListener( view -> {
-            viewPager.setCurrentItem( 11 ,false);
+            viewPager.setCurrentItem( 10 ,false);
             headerMenuClicked();
         } );
 
@@ -216,17 +218,17 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
             }else if (position == 5) {
                 return AppsViewFragment.newInstance( "HOST","FOOD");
             }else if (position == 6) {
-                return AppsViewFragment.newInstance( "HOST","UTILITY");
+                return AppsViewFragment.newInstance( "HOST","NEWS");
             }else if (position == 7) {
                 return AppsViewFragment.newInstance( "HOST","SPORTS");
             }else if (position == 8) {
                 return AppsViewFragment.newInstance( "HOST","RECHARGE");
             }else if (position == 9) {
-                return AppsViewFragment.newInstance( "HOST","NEWS");
-            }else if (position == 10) {
                 return AppsViewFragment.newInstance( "HOST","TRAVEL");
-            }else if (position == 11) {
+            }else if (position == 10) {
                 return AppsViewFragment.newInstance( "HOST","HEALTH");
+            }else if (position == 11) {
+                return AppsViewFragment.newInstance( "HOST","UTILITY");
             }else if (position == 12) {
                 return AppsViewFragment.newInstance( "HOST","OTHERS");
             }
@@ -255,17 +257,17 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
             else if(position == 5)
                 title = "FOOD";
             else if(position == 6)
-                title = "UTILITY";
+                title = "NEWS";
             else if(position == 7)
                 title = "SPORTS";
             else if(position == 8)
                 title = "RECHARGE";
             else if(position == 9)
-                title = "NEWS";
-            else if(position == 10)
                 title = "TRAVEL";
-            else if(position == 11)
+            else if(position == 10)
                 title = "HEALTH";
+            else if(position == 11)
+                title = "UTILITY";
             else if(position == 12)
                 title = "OTHERS";
 

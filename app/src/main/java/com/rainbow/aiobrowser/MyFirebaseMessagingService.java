@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    String title,notificationBody,imageUrl;
+    String title="",notificationBody="",imageUrl="";
     SharedPreferences pref;
     Intent intent;
     PendingIntent pendingIntent;
@@ -52,13 +52,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     public void createNotification(final RemoteMessage remoteMessage) {
-        Map<String, String> notificationExtraData  = remoteMessage.getData();
-
-        title = Objects.requireNonNull( remoteMessage.getNotification() ).getTitle();
-        notificationBody = remoteMessage.getNotification().getBody();
-        if(!(remoteMessage.getNotification().getImageUrl()==null || remoteMessage.getNotification().getImageUrl().toString().isEmpty())){
-            imageUrl = remoteMessage.getNotification().getImageUrl().toString();
+        try {
+            if( remoteMessage.getNotification()!=null ){
+                if(remoteMessage.getNotification().getTitle() != null)
+                    title = Objects.requireNonNull( remoteMessage.getNotification() ).getTitle();
+                if(remoteMessage.getNotification().getBody() != null)
+                    notificationBody = remoteMessage.getNotification().getBody();
+                if(!(remoteMessage.getNotification().getImageUrl()==null || remoteMessage.getNotification().getImageUrl().toString().isEmpty())){
+                    imageUrl = remoteMessage.getNotification().getImageUrl().toString();
+                }
+            }
+        }catch (Exception e){
+            Log.d("Notification ", e.toString());
         }
+        Map<String, String> notificationExtraData  = remoteMessage.getData();
         final Bitmap resource = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
 
         if(notificationExtraData.containsKey( "title" )){
