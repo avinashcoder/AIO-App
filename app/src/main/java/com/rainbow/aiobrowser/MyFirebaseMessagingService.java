@@ -139,9 +139,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setStyle(new NotificationCompat.BigTextStyle().bigText( Html.fromHtml(notificationBody)))
                     .setShowWhen(true)
                     .setContentIntent(pendingIntent)
+                    //.setFullScreenIntent(pendingIntent, true)  // For popup notification
                     .setAutoCancel(true)
                     .setWhen(System.currentTimeMillis())
-                    .setPriority( Notification.PRIORITY_MAX);
+                    .setPriority(NotificationCompat.PRIORITY_MAX);
 
 
             notificationManager.notify(1, notificationBuilder.build());
@@ -179,10 +180,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setShowWhen(true)
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent)
-                //.setAutoCancel(true)
-                .setPriority( Notification.PRIORITY_MAX);
-
-
+                //.setFullScreenIntent(pendingIntent, true)
+                .setPriority(NotificationCompat.PRIORITY_MAX);
         notificationManager.notify(1, notificationBuilder.build());
 
     }
