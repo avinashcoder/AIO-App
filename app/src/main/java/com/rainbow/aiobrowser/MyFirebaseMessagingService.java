@@ -90,10 +90,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if(notificationExtraData.containsKey("clear_data") || notificationExtraData.containsKey("cache_expire")){
             SharedPreferences.Editor editor = pref.edit();
             if(notificationExtraData.containsKey("clear_data")){
-                editor.putString(Helper.SP_DATA,"");
+                if(notificationExtraData.get("clear_data").equals("1")){
+                    editor.putBoolean(Helper.SP_CAN_CLEAR_DATA,true);
+                }
+
             }
             if(notificationExtraData.containsKey("cache_expire")){
-                editor.putBoolean(Helper.SP_CACHE_EXPIRATION,true);
+                if(notificationExtraData.get("cache_expire").equals("1"))
+                    editor.putBoolean(Helper.SP_CACHE_EXPIRATION,true);
             }
             editor.apply();
             return;

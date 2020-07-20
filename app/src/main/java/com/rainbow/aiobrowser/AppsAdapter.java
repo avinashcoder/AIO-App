@@ -45,7 +45,10 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         holder.appName.setText( model.getName() );
         String url = model.getImageUrl();
         if(!url.contains( "http" )){
-            url = "https://firebasestorage.googleapis.com/v0/b/all-in-one-d12ec.appspot.com/o/appicon%2F"+url+"?alt=media";
+            if(Helper.IMAGE_BUCKET_URL.contains("firebase"))
+                url = Helper.IMAGE_BUCKET_URL+url+"?alt=media";
+            else
+                url = Helper.IMAGE_BUCKET_URL+"/"+url;
         }
         Glide.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
     }

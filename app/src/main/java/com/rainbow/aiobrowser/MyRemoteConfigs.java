@@ -51,6 +51,7 @@ public class MyRemoteConfigs {
 
     private void setAPIEndPoint(FirebaseRemoteConfig fbConfig){
         Helper.API_END_POINT = fbConfig.getString("API_END_POINT");
+        Helper.IMAGE_BUCKET_URL = fbConfig.getString("IMAGE_BUCKET_URL");
     }
 
     public interface CallBackFn {

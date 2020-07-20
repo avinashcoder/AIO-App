@@ -27,6 +27,14 @@ public class SplashActivity extends AppCompatActivity implements NoInternetDialo
         setContentView( R.layout.activity_splash );
         pref = getSharedPreferences(Helper.MyPreference, MODE_PRIVATE);
 
+        if(pref.getBoolean(Helper.SP_CAN_CLEAR_DATA,false)){
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(Helper.SP_DATA,"");
+            editor.putBoolean(Helper.SP_CAN_CLEAR_DATA,false);
+            editor.apply();
+        }
+
+
         if (getIntent().getExtras() != null) {
             for (String key : getIntent().getExtras().keySet()) {
                 if(key.equalsIgnoreCase("url"))
