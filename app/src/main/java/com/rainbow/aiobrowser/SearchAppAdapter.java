@@ -11,7 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -21,12 +22,14 @@ public class SearchAppAdapter extends RecyclerView.Adapter<SearchAppAdapter.View
     private ArrayList<AppsModel> arrayList = new ArrayList<>();
     private AppClickInterface mListener;
     private String pageAction;
+    private StorageReference mStorageRef;
 
     public SearchAppAdapter(Context mContext, ArrayList<AppsModel> arrayList, String pageAction, SearchAppAdapter.AppClickInterface mListener) {
         this.mContext = mContext;
         this.arrayList = arrayList;
         this.pageAction = pageAction;
         this.mListener = mListener;
+        mStorageRef = FirebaseStorage.getInstance().getReference().child("appicon");
     }
 
     interface AppClickInterface{
@@ -47,9 +50,22 @@ public class SearchAppAdapter extends RecyclerView.Adapter<SearchAppAdapter.View
         holder.appName.setText( model.getName() );
         String url = model.getImageUrl();
         if(!url.contains( "http" )){
-            url = "https://firebasestorage.googleapis.com/v0/b/all-in-one-d12ec.appspot.com/o/appicon%2F"+url+"?alt=media";
+            if(Helper.IMAGE_BUCKET_URL.contains("firebase")) {
+                GlideApp.with(mContext)
+                        .load(mStorageRef.child(url))
+                        .centerCrop()
+                        .into(holder.appImage);
+                //url = Helper.IMAGE_BUCKET_URL + url + "?alt=media";
+            }
+            else{
+                url = Helper.IMAGE_BUCKET_URL+"/"+url;
+                GlideApp.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
+
+            }
+        }else {
+            GlideApp.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
         }
-        Glide.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
+
         if(pageAction.equalsIgnoreCase("FAVOURITE")){
             holder.checkBox.setVisibility(View.VISIBLE);
         }else{

@@ -5,5 +5,10 @@
         <key>API_END_POINT</key>
         <value>https://allinoneappbrowser.000webhostapp.com/allinone/getappdata.php</value>
     </entry>
+
+    <entry>
+        <key>IMAGE_BUCKET_URL</key>
+        <value>https://firebasestorage.googleapis.com/v0/b/all-in-one-d12ec.appspot.com/o/appicon%2F</value>
+    </entry>
 </defaultsMap>
     <!-- END xml_defaults -->

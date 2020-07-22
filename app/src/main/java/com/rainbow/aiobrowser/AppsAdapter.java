@@ -28,7 +28,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         this.mContext = mContext;
         this.arrayList = arrayList;
         this.mListener = mListener;
-        this.mStorageRef= mStorageRef = FirebaseStorage.getInstance().getReference().child("appicon");
+        this.mStorageRef = FirebaseStorage.getInstance().getReference().child("appicon");
     }
 
     interface AppClickInterface{
@@ -52,6 +52,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
             if(Helper.IMAGE_BUCKET_URL.contains("firebase")) {
                 GlideApp.with(mContext)
                         .load(mStorageRef.child(url))
+                        .centerCrop()
                         .into(holder.appImage);
                 //url = Helper.IMAGE_BUCKET_URL + url + "?alt=media";
             }
