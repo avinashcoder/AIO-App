@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.zip.Inflater;
@@ -20,11 +22,13 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
     private Context mContext;
     private ArrayList<AppsModel> arrayList = new ArrayList<>();
     private AppClickInterface mListener;
+    private StorageReference mStorageRef;
 
     public AppsAdapter(Context mContext, ArrayList<AppsModel> arrayList, AppClickInterface mListener) {
         this.mContext = mContext;
         this.arrayList = arrayList;
         this.mListener = mListener;
+        this.mStorageRef= mStorageRef = FirebaseStorage.getInstance().getReference().child("appicon");
     }
 
     interface AppClickInterface{
@@ -45,12 +49,21 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsAdapter.ViewHolder> {
         holder.appName.setText( model.getName() );
         String url = model.getImageUrl();
         if(!url.contains( "http" )){
-            if(Helper.IMAGE_BUCKET_URL.contains("firebase"))
-                url = Helper.IMAGE_BUCKET_URL+url+"?alt=media";
-            else
+            if(Helper.IMAGE_BUCKET_URL.contains("firebase")) {
+                GlideApp.with(mContext)
+                        .load(mStorageRef.child(url))
+                        .into(holder.appImage);
+                //url = Helper.IMAGE_BUCKET_URL + url + "?alt=media";
+            }
+            else{
                 url = Helper.IMAGE_BUCKET_URL+"/"+url;
+                GlideApp.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
+
+            }
+
+        }else {
+            GlideApp.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
         }
-        Glide.with( mContext ).load( url ).centerCrop().placeholder( null ).into( holder.appImage );
     }
 
     @Override
