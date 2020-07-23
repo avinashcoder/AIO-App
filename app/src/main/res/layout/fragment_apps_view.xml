@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".AppsViewFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="80dp">
+        android:paddingBottom="40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,24 +22,34 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false" />
 
-            <com.google.android.gms.ads.AdView
+            <FrameLayout
+                android:id="@+id/ad_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
+
+            <!--<com.google.android.gms.ads.AdView
                 android:id="@+id/ad_big_banner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                ads:adSize="MEDIUM_RECTANGLE"
-                ads:adUnitId="@string/banner_ad_unit_id"
-                android:layout_marginTop="5dp"
                 android:layout_gravity="center"
-                />
+                android:layout_marginTop="5dp"
+                ads:adSize="LEADERBOARD"
+                ads:adUnitId="@string/banner_ad_unit_id" />
 
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adViewScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="15dp"
+                ads:adSize="SMART_BANNER"
+                ads:adUnitId="@string/banner_ad_unit_id"/>-->
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
 
 
     <LinearLayout
@@ -52,9 +62,9 @@
         android:visibility="gone">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:layout_gravity="center"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/empty_box_lottie" />
@@ -63,11 +73,11 @@
             android:id="@+id/no_app_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
             android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:gravity="center"
             android:text="OOPS! No apps in your favourite list, add your favourite app here"
             android:textColor="@color/black" />
 
@@ -75,35 +85,40 @@
     </LinearLayout>
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/no_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/colorPrimary"
+        android:gravity="center"
         android:text="No app available in this section\n COMMING SOON"
-        android:gravity="center"/>
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
 
-    <com.google.android.gms.ads.AdView
+    <!--<com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="bottom"
-        ads:adUnitId="@string/banner_ad_unit_id">
-    </com.google.android.gms.ads.AdView>
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id"></com.google.android.gms.ads.AdView>-->
+
+    <FrameLayout
+        android:id="@+id/ad_layout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_favourite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="30dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_add"
+        android:layout_marginBottom="30dp"
         android:elevation="10dp"
+        android:src="@drawable/ic_add"
         android:visibility="gone"
         app:backgroundTint="@color/colorPrimary"
         app:rippleColor="@color/colorAccent" />

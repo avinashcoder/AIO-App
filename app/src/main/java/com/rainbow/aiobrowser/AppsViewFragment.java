@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -62,23 +65,34 @@ public class AppsViewFragment extends Fragment {
     LinearLayout noFavouriteLayout;
     @BindView(R.id.no_app)
     TextView noApp;
-    @BindView(R.id.adView)
+    /*@BindView(R.id.adView)
     AdView mAdView;
+    @BindView(R.id.adViewScroll)
+    AdView mAdViewScroll;
     @BindView(R.id.ad_big_banner)
-    AdView mAdViewBig;
+    AdView mAdViewBig;*/
     @BindView(R.id.add_favourite)
     FloatingActionButton addFavNew;
     @BindView(R.id.no_app_msg)
     TextView noAppMsg;
 
+    @BindView(R.id.ad_layout)
+    FrameLayout adLayout;
+    @BindView(R.id.ad_layout_bottom)
+    FrameLayout adLayoutBottom;
+
 
     private DatabaseHandler handler;
+    private int orientation;
+    private AdRequest adRequest;
+    int flag = 0;
 
     private BroadcastReceiver refreshFavourite = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 arrayList = handler.getFavourite();
+                flag = 1;
                 initView();
             }
         }
@@ -124,6 +138,9 @@ public class AppsViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apps_view, container, false);
         ButterKnife.bind(this, view);
+        orientation = getResources().getConfiguration().orientation;
+        adRequest = new AdRequest.Builder().build();
+
         initView();
         if (pageType.equalsIgnoreCase("HOST")) {
             if (jsonArray.length() != 0) {
@@ -138,9 +155,8 @@ public class AppsViewFragment extends Fragment {
             addFavNew.setVisibility(View.GONE);
         }
         LocalBroadcastManager.getInstance(Objects.requireNonNull(getContext())).registerReceiver(refreshFavourite, new IntentFilter("refresh"));
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        mAdViewBig.loadAd(adRequest);
+        flag = 0;
+        loadProperAds();
         return view;
     }
 
@@ -149,7 +165,8 @@ public class AppsViewFragment extends Fragment {
         builder.setShowTitle( false );
         builder.enableUrlBarHiding();
         CustomTabsIntent customTabsIntent = builder.build();*/
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
+       int spanCount = (orientation == Configuration.ORIENTATION_PORTRAIT)? 3 : 5;
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
         recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new AppsAdapter(getContext(), arrayList, new AppsAdapter.AppClickInterface() {
             @Override
@@ -169,7 +186,6 @@ public class AppsViewFragment extends Fragment {
         adapter.notifyDataSetChanged();
         if (arrayList.size() == 0) {
             noFavouriteLayout.setVisibility(View.VISIBLE);
-            mAdViewBig.setVisibility(View.GONE);
             if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
             } else {
@@ -177,8 +193,9 @@ public class AppsViewFragment extends Fragment {
             }
         } else {
             noFavouriteLayout.setVisibility(View.GONE);
-            mAdViewBig.setVisibility(View.VISIBLE);
         }
+        if(flag == 1)
+            loadProperAds();
     }
 
     private void createPopUp(int position, View view) {
@@ -260,34 +277,16 @@ public class AppsViewFragment extends Fragment {
         adapter.notifyDataSetChanged();
         if (arrayList.size() == 0) {
             noFavouriteLayout.setVisibility(View.VISIBLE);
-            mAdViewBig.setVisibility(View.GONE);
             if (pageType.equalsIgnoreCase("FAVOURITE")) {
                 noAppMsg.setText("OOPS! No apps in your favourite list, add your favourite app here");
             } else {
                 noAppMsg.setText("Currently, no app available in this section");
             }
+            //showBottomAds();
 
         } else {
             noFavouriteLayout.setVisibility(View.GONE);
-            mAdViewBig.setVisibility(View.VISIBLE);
         }
-    }
-
-    public void searchApp(String key) {
-        arrayList.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                AppsModel model = new AppsModel(jsonArray.getJSONObject(i));
-                if (model.getAppType().equalsIgnoreCase(filter) || filter.equalsIgnoreCase("ALL")) {
-                    if (key.equals("") || model.getName().contains(key))
-                        arrayList.add(model);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @OnClick({R.id.add_favourite, R.id.no_favourite_layout})
@@ -296,13 +295,6 @@ public class AppsViewFragment extends Fragment {
             Intent intent = new Intent(getContext(), SearchActivity.class);
             intent.putExtra("ACTION", "FAVOURITE");
             startActivity(intent);
-        }
-    }
-
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
         }
     }
 
@@ -340,7 +332,49 @@ public class AppsViewFragment extends Fragment {
         super.onResume();
         if (pageType.equalsIgnoreCase("FAVOURITE")) {
             arrayList = handler.getFavourite();
+            flag = 1;
             initView();
         }
+    }
+
+    private void loadProperAds(){
+        adLayoutBottom.removeAllViews();
+        adLayout.removeAllViews();
+        AdView adView = new AdView(Objects.requireNonNull(getContext()));
+        adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+        if(orientation == Configuration.ORIENTATION_PORTRAIT && arrayList.size() != 0){
+            adView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+        }else{
+            adView.setAdSize(AdSize.SMART_BANNER);
+        }
+        adView.loadAd(adRequest);
+        if(arrayList.size() != 0)
+            adLayout.addView(adView);
+        else
+            adLayoutBottom.addView(adView);
+        /*if(orientation == Configuration.ORIENTATION_PORTRAIT){
+            mAdView.setVisibility(View.GONE);
+            mAdViewScroll.setVisibility(View.GONE);
+            mAdViewBig.setVisibility(View.VISIBLE);
+            mAdViewBig.loadAd(adRequest);
+        }else{
+            mAdViewBig.setVisibility(View.GONE);
+            mAdView.setVisibility(View.GONE);
+            mAdViewScroll.setVisibility(View.VISIBLE);
+            mAdViewScroll.loadAd(adRequest);
+        }*/
+    }
+
+    private void showBottomAds(){
+        adLayout.removeAllViews();
+        AdView adView = new AdView(Objects.requireNonNull(getContext()));
+        adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.loadAd(adRequest);
+        adLayoutBottom.addView(adView);
+        /*mAdViewBig.setVisibility(View.GONE);
+        mAdViewScroll.setVisibility(View.GONE);
+        mAdView.setVisibility(View.VISIBLE);
+        mAdView.loadAd(adRequest);*/
     }
 }
