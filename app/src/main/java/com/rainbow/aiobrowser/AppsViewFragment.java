@@ -343,7 +343,7 @@ public class AppsViewFragment extends Fragment {
         AdView adView = new AdView(Objects.requireNonNull(getContext()));
         adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
         if(orientation == Configuration.ORIENTATION_PORTRAIT && arrayList.size() != 0){
-            adView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+            adView.setAdSize(new AdSize(AdSize.FULL_WIDTH, 300));
         }else{
             adView.setAdSize(AdSize.SMART_BANNER);
         }
