@@ -15,7 +15,7 @@
         <item name="colorControlNormal">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
-        <item name="android:windowBackground">@drawable/splash_layer_list</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
     <style name="BrowserTheme" parent="Theme.AppCompat.Light.NoActionBar">

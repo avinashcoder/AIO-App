@@ -17,6 +17,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -92,6 +95,8 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
             startActivity(i);
         }
 
+        MobileAds.initialize(this);
+
     }
 
     private void initDrawerView() {
@@ -108,6 +113,8 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
         navTravel = drawerView.findViewById( R.id.nav_travel );
         navHealth = drawerView.findViewById( R.id.nav_health );
         navOthers = drawerView.findViewById( R.id.nav_others );
+
+
 
         navFavourite.setOnClickListener( view -> {
             viewPager.setCurrentItem( 0 ,false);
