@@ -124,6 +124,7 @@ public class SearchActivity extends AppCompatActivity {
                 Intent intent = new Intent( SearchActivity.this,WebViewActivity.class );
                 intent.putExtra( "URL",arrayList.get( position ).getTargetUrl() );
                 startActivity( intent );
+                finish();
             }
 
             @Override
