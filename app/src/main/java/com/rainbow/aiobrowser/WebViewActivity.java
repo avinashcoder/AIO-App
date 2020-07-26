@@ -1,6 +1,7 @@
 package com.rainbow.aiobrowser;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.URLUtil;
@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.delight.android.webview.AdvancedWebView;
 
 
 public class WebViewActivity extends AppCompatActivity implements AdvancedWebView.Listener {
@@ -51,10 +52,25 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
         Intent intent = getIntent();
         String url = intent.getStringExtra( "URL" );
         mWebView.setListener(this, this);
-        mWebView.loadUrl(url);
-        mWebView.getSettings().setSupportMultipleWindows( true );
-        mWebView.setWebChromeClient( new WebChromeClient(){
+        mWebView.setGeolocationEnabled(false);
+        mWebView.setMixedContentAllowed(true);
+        mWebView.setCookiesEnabled(true);
+        mWebView.setThirdPartyCookiesEnabled(true);
+        mWebView.setWebViewClient(new WebViewClient() {
 
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                //Toast.makeText(WebViewActivity.this, "Finished loading", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+        mWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                //Toast.makeText(WebViewActivity.this, title, Toast.LENGTH_SHORT).show();
+            }
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 progressBar.setProgress( newProgress );
@@ -65,53 +81,67 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
                 }
             }
 
-            @Override
-            public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-                AdvancedWebView newWebView = new AdvancedWebView(WebViewActivity.this);
-                newWebView.getSettings().setJavaScriptEnabled(true);
-                newWebView.getSettings().setSupportZoom(true);
-                newWebView.getSettings().setBuiltInZoomControls(true);
-                newWebView.getSettings().setSupportMultipleWindows(true);
-//                view.addView(newWebView);
-                WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-                transport.setWebView(newWebView);
-                resultMsg.sendToTarget();
+        });
+        mWebView.addHttpHeader("X-Requested-With", "");
+        mWebView.loadUrl(url);
+    }
 
-                newWebView.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        Intent browserIntent = new Intent(WebViewActivity.this,WebViewActivity.class);
-                        browserIntent.putExtra( "URL",url );
-                        startActivity(browserIntent);
-                        //view.loadUrl(url);
-                        return true;
-                    }
-                });
+    @SuppressLint("NewApi")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mWebView.onResume();
+        // ...
+    }
 
-                return true;
-            }
-        } );
+    @SuppressLint("NewApi")
+    @Override
+    protected void onPause() {
+        mWebView.onPause();
+        // ...
+        super.onPause();
     }
 
     @Override
-    public void onPageStarted(String url, Bitmap favicon) {
+    protected void onDestroy() {
+        mWebView.onDestroy();
+        // ...
+        super.onDestroy();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        mWebView.onActivityResult(requestCode, resultCode, intent);
+        // ...
+    }
+
+    /*@Override
+    public void onBackPressed() {
+        if (!mWebView.onBackPressed()) { return; }
+        // ...
+        super.onBackPressed();
+    }*/
+
+    @Override
+    public void onPageStarted(String url, Bitmap favicon) {
+        mWebView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onPageFinished(String url) {
-
+        mWebView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
         errorText.setText( "Something went wrong\n\n"+description );
         errorLayout.setVisibility( View.VISIBLE );
+        //Toast.makeText(this, "onPageError(errorCode = "+errorCode+",  description = "+description+",  failingUrl = "+failingUrl+")", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) {
-
         if(checkPermission()){
             DownloadManager.Request request = new DownloadManager.Request( Uri.parse(url));
             request.setMimeType(mimeType);
@@ -131,7 +161,13 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
         }else{
             requestPermission();
         }
-
+        /*Toast.makeText(this, "onDownloadRequested(url = "+url+",  suggestedFilename = "+suggestedFilename+",  mimeType = "+mimeType+",  contentLength = "+contentLength+",  contentDisposition = "+contentDisposition+",  userAgent = "+userAgent+")", Toast.LENGTH_LONG).show();
+		if (AdvancedWebView.handleDownload(this, url, suggestedFilename)) {
+			// download successfully handled
+		}
+		else {
+			// download couldn't be handled because user has disabled download manager app on the device
+		}*/
     }
 
     public boolean checkPermission() {
@@ -146,11 +182,10 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
 
     @Override
     public void onExternalPageRequest(String url) {
-
+        //Toast.makeText(this, "onExternalPageRequest(url = "+url+")", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent( this,WebViewActivity.class );
         intent.putExtra( "URL",url );
         startActivity( intent );
-
     }
 
     @Override
@@ -178,4 +213,5 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
         if (mContext != null)
             Toast.makeText(mContext, "Please click again to exit", Toast.LENGTH_SHORT).show();
     }
+
 }

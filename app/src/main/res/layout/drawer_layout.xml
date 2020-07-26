@@ -11,7 +11,14 @@
         android:paddingBottom="15dp"
         android:paddingTop="20dp"
         android:background="@color/colorPrimary"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/aio"
+            android:layout_marginStart="15dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -22,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="All in one - Social &amp; Shopping"
+                android:text="Smart App - All in One"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
