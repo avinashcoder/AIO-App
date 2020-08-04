@@ -25,6 +25,10 @@ public class SplashActivity extends AppCompatActivity implements NoInternetDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_splash );
+        /*if (isAppResumed()) {
+            finish();
+            return;
+        }*/
         pref = getSharedPreferences(Helper.MyPreference, MODE_PRIVATE);
 
         if(pref.getBoolean(Helper.SP_CAN_CLEAR_DATA,false)){
@@ -86,7 +90,7 @@ public class SplashActivity extends AppCompatActivity implements NoInternetDialo
         if(!notificationData.isEmpty())
             i.putExtra("URL",notificationData);
         startActivity( i );
-        finish();
+        this.finish();
     }
 
     private void getDataFromServer() {
@@ -120,5 +124,12 @@ public class SplashActivity extends AppCompatActivity implements NoInternetDialo
     public void closeApp() {
         noInternetDialogFragment.dismiss();
         finish();
+    }
+
+    private boolean isAppResumed() {
+        return !isTaskRoot()
+                && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+                && getIntent().getAction() != null
+                && getIntent().getAction().equals(Intent.ACTION_MAIN);
     }
 }

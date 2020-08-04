@@ -341,7 +341,10 @@ public class AppsViewFragment extends Fragment {
         adLayoutBottom.removeAllViews();
         adLayout.removeAllViews();
         AdView adView = new AdView(Objects.requireNonNull(getContext()));
-        adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+        if(Helper.envType ==Helper.LIVE)
+            adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+        else
+            adView.setAdUnitId(getResources().getString(R.string.banner_test_ad_unit_id));
         if(orientation == Configuration.ORIENTATION_PORTRAIT && arrayList.size() != 0){
             adView.setAdSize(new AdSize(AdSize.FULL_WIDTH, 300));
         }else{

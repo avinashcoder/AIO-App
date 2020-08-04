@@ -319,4 +319,10 @@ public class HomeActivity extends AppCompatActivity implements AppsViewFragment.
             drawer.closeDrawer( GravityCompat.START );
         super.onPause();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
 }

@@ -28,34 +28,34 @@ import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import im.delight.android.webview.AdvancedWebView;
 
 
-public class WebViewActivity extends AppCompatActivity implements AdvancedWebView.Listener {
+public class WebViewActivity extends AppCompatActivity implements CustomWebView.Listener {
 
     @BindView(R.id.webview)
-    AdvancedWebView mWebView;
-    @BindView( R.id.progressBar )
+    CustomWebView mWebView;
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @BindView( R.id.error_layout )
+    @BindView(R.id.error_layout)
     LinearLayout errorLayout;
-    @BindView( R.id.error_text )
+    @BindView(R.id.error_text)
     TextView errorText;
 
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_web_view );
-        ButterKnife.bind( this );
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_web_view);
+        ButterKnife.bind(this);
         Intent intent = getIntent();
-        String url = intent.getStringExtra( "URL" );
+        String url = intent.getStringExtra("URL");
         mWebView.setListener(this, this);
         mWebView.setGeolocationEnabled(false);
         mWebView.setMixedContentAllowed(true);
         mWebView.setCookiesEnabled(true);
         mWebView.setThirdPartyCookiesEnabled(true);
+        mWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -71,13 +71,14 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
                 super.onReceivedTitle(view, title);
                 //Toast.makeText(WebViewActivity.this, title, Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                progressBar.setProgress( newProgress );
-                if(newProgress==100){
-                    progressBar.setVisibility( View.GONE );
-                }else{
-                    progressBar.setVisibility( View.VISIBLE );
+                progressBar.setProgress(newProgress);
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -125,7 +126,7 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
 
     @Override
     public void onPageStarted(String url, Bitmap favicon) {
-        mWebView.setVisibility(View.INVISIBLE);
+        //mWebView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -135,15 +136,16 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
-        errorText.setText( "Something went wrong\n\n"+description );
-        errorLayout.setVisibility( View.VISIBLE );
+
+        errorText.setText("Something went wrong\n\n" + description);
+        errorLayout.setVisibility(View.VISIBLE);
         //Toast.makeText(this, "onPageError(errorCode = "+errorCode+",  description = "+description+",  failingUrl = "+failingUrl+")", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDownloadRequested(String url, String suggestedFilename, String mimeType, long contentLength, String contentDisposition, String userAgent) {
-        if(checkPermission()){
-            DownloadManager.Request request = new DownloadManager.Request( Uri.parse(url));
+        if (checkPermission()) {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
             request.setMimeType(mimeType);
             String cookies = CookieManager.getInstance().getCookie(url);
             request.addRequestHeader("cookie", cookies);
@@ -158,16 +160,9 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
             DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             dm.enqueue(request);
             Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
-        }else{
+        } else {
             requestPermission();
         }
-        /*Toast.makeText(this, "onDownloadRequested(url = "+url+",  suggestedFilename = "+suggestedFilename+",  mimeType = "+mimeType+",  contentLength = "+contentLength+",  contentDisposition = "+contentDisposition+",  userAgent = "+userAgent+")", Toast.LENGTH_LONG).show();
-		if (AdvancedWebView.handleDownload(this, url, suggestedFilename)) {
-			// download successfully handled
-		}
-		else {
-			// download couldn't be handled because user has disabled download manager app on the device
-		}*/
     }
 
     public boolean checkPermission() {
@@ -177,15 +172,15 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
     }
 
     @Override
     public void onExternalPageRequest(String url) {
         //Toast.makeText(this, "onExternalPageRequest(url = "+url+")", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent( this,WebViewActivity.class );
-        intent.putExtra( "URL",url );
-        startActivity( intent );
+        Intent intent = new Intent(this, WebViewActivity.class);
+        intent.putExtra("URL", url);
+        startActivity(intent);
     }
 
     @Override
@@ -197,17 +192,21 @@ public class WebViewActivity extends AppCompatActivity implements AdvancedWebVie
             return;
         }
 
-        if(mWebView.canGoBack()){
+        if (mWebView.canGoBack()) {
             this.doubleBackToExitPressedOnce = true;
             // Toast message
             showToast();
             new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
             mWebView.goBack();
-            errorLayout.setVisibility( View.GONE );
-        }else{
+            if(errorLayout.getVisibility() == View.VISIBLE){
+                mWebView.setVisibility(View.GONE);
+            }
+            errorLayout.setVisibility(View.GONE);
+        } else {
             super.onBackPressed();
         }
     }
+
     private void showToast() {
         Context mContext = getApplicationContext();
         if (mContext != null)
