@@ -40,7 +40,9 @@ public class WebViewActivity extends AppCompatActivity implements CustomWebView.
     LinearLayout errorLayout;
     @BindView(R.id.error_text)
     TextView errorText;
+    String url;
 
+    private boolean errorRetry = true;
     private boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -49,7 +51,7 @@ public class WebViewActivity extends AppCompatActivity implements CustomWebView.
         setContentView(R.layout.activity_web_view);
         ButterKnife.bind(this);
         Intent intent = getIntent();
-        String url = intent.getStringExtra("URL");
+        url = intent.getStringExtra("URL");
         mWebView.setListener(this, this);
         mWebView.setGeolocationEnabled(false);
         mWebView.setMixedContentAllowed(true);
@@ -132,13 +134,18 @@ public class WebViewActivity extends AppCompatActivity implements CustomWebView.
     @Override
     public void onPageFinished(String url) {
         mWebView.setVisibility(View.VISIBLE);
+        errorRetry = true;
     }
 
     @Override
     public void onPageError(int errorCode, String description, String failingUrl) {
-
-        errorText.setText("Something went wrong\n\n" + description);
-        errorLayout.setVisibility(View.VISIBLE);
+        if(errorRetry){
+            mWebView.loadUrl(url);
+            errorRetry = false;
+        }else{
+            errorText.setText("Something went wrong\n\n" + description);
+            errorLayout.setVisibility(View.VISIBLE);
+        }
         //Toast.makeText(this, "onPageError(errorCode = "+errorCode+",  description = "+description+",  failingUrl = "+failingUrl+")", Toast.LENGTH_SHORT).show();
     }
 

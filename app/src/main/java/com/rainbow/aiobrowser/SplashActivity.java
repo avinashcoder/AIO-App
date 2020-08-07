@@ -25,10 +25,10 @@ public class SplashActivity extends AppCompatActivity implements NoInternetDialo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_splash );
-        /*if (isAppResumed()) {
+        if (isAppResumed()) {
             finish();
             return;
-        }*/
+        }
         pref = getSharedPreferences(Helper.MyPreference, MODE_PRIVATE);
 
         if(pref.getBoolean(Helper.SP_CAN_CLEAR_DATA,false)){

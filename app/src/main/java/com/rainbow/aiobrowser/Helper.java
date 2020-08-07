@@ -5,7 +5,7 @@ public class Helper {
     public static int LIVE = 0;
     public static int STAGING = 1;
 
-    public static int envType = STAGING;
+    public static int envType = LIVE;
 
     public static String API_END_POINT = "https://allinoneappbrowser.000webhostapp.com/allinone/getappdata.php";
     public static String IMAGE_BUCKET_URL = "https://firebasestorage.googleapis.com/v0/b/all-in-one-d12ec.appspot.com/o/appicon%2F";
